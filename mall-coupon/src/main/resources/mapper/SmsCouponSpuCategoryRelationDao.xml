@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.mall.coupon.dao.SmsCouponSpuCategoryRelationDao">
+
+    <resultMap type="com.project.mall.coupon.entity.SmsCouponSpuCategoryRelation" id="SmsCouponSpuCategoryRelationMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="couponId" column="coupon_id" jdbcType="INTEGER"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SmsCouponSpuCategoryRelationMap">
+        select
+          id, coupon_id, category_id, category_name
+        from sms_coupon_spu_category_relation
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SmsCouponSpuCategoryRelationMap">
+        select
+          id, coupon_id, category_id, category_name
+        from sms_coupon_spu_category_relation
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="couponId != null">
+                and coupon_id = #{couponId}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                and category_name = #{categoryName}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from sms_coupon_spu_category_relation
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="couponId != null">
+                and coupon_id = #{couponId}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                and category_name = #{categoryName}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sms_coupon_spu_category_relation(coupon_id, category_id, category_name)
+        values (#{couponId}, #{categoryId}, #{categoryName})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sms_coupon_spu_category_relation(coupon_id, category_id, category_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.couponId}, #{entity.categoryId}, #{entity.categoryName})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sms_coupon_spu_category_relation(coupon_id, category_id, category_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.couponId}, #{entity.categoryId}, #{entity.categoryName})
+        </foreach>
+        on duplicate key update
+        coupon_id = values(coupon_id),
+        category_id = values(category_id),
+        category_name = values(category_name)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update sms_coupon_spu_category_relation
+        <set>
+            <if test="couponId != null">
+                coupon_id = #{couponId},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                category_name = #{categoryName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from sms_coupon_spu_category_relation where id = #{id}
+    </delete>
+
+</mapper>
+
